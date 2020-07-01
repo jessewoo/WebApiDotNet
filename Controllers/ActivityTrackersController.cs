@@ -34,7 +34,7 @@ namespace ActivityTracker.Controllers
     }
 
     // GET api/activityTrackers/{id} 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetActivityTrackersById")]
     public ActionResult<ActivityReadDto> GetActivityTrackersById(int id)
     {
       var item = _repository.GetActivityById(id);
@@ -60,7 +60,11 @@ namespace ActivityTracker.Controllers
       // Save the changes to DB
       _repository.SaveChanges();
 
-      return Ok(activityModel);
+      var activityReadDto = _mapper.Map<ActivityReadDto>(activityModel);
+
+      // Past back the location of the resources you created
+      // 201 Created
+      return CreatedAtRoute(nameof(GetActivityTrackersById), new { Id = activityReadDto.Id }, activityReadDto);
     }
 
   }
