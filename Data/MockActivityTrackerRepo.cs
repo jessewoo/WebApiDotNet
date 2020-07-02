@@ -10,6 +10,11 @@ namespace ActivityTracker.Data
       throw new System.NotImplementedException();
     }
 
+    public void DeleteActivity(Activity activity)
+    {
+      throw new System.NotImplementedException();
+    }
+
     public Activity GetActivityById(int id)
     {
       return new Activity { Id = 1, ActivityType = "steps", Met = 1000, TotalGoal = 900, DailyGoal = 100 };
@@ -29,6 +34,11 @@ namespace ActivityTracker.Data
     }
 
     public bool SaveChanges()
+    {
+      throw new System.NotImplementedException();
+    }
+
+    public void UpdateActivity(Activity activity)
     {
       throw new System.NotImplementedException();
     }

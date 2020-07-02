@@ -10,5 +10,7 @@ namespace ActivityTracker.Data
     IEnumerable<Activity> GetAllActivities();
     Activity GetActivityById(int id);
     void CreateActivity(Activity activity);
+    void UpdateActivity(Activity activity);
+    void DeleteActivity(Activity activity);
   }
 }

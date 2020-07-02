@@ -27,6 +27,16 @@ namespace ActivityTracker.Data
       _context.Activities.Add(activity);
     }
 
+    public void DeleteActivity(Activity activity)
+    {
+      if (activity == null)
+      {
+        throw new ArgumentNullException(nameof(activity));
+      }
+
+      _context.Activities.Remove(activity);
+    }
+
     public Activity GetActivityById(int id)
     {
       return _context.Activities.FirstOrDefault(p => p.Id == id);
@@ -40,6 +50,11 @@ namespace ActivityTracker.Data
     public bool SaveChanges()
     {
       return (_context.SaveChanges() >= 0);
+    }
+
+    public void UpdateActivity(Activity activity)
+    {
+      // Nothing
     }
   }
 }

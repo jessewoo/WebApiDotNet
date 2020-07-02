@@ -3,6 +3,7 @@ using ActivityTracker.Data;
 using ActivityTracker.Dtos;
 using ActivityTracker.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ActivityTracker.Controllers
@@ -65,6 +66,95 @@ namespace ActivityTracker.Controllers
       // Past back the location of the resources you created
       // 201 Created
       return CreatedAtRoute(nameof(GetActivityTrackersById), new { Id = activityReadDto.Id }, activityReadDto);
+    }
+
+    // PUT api/activityTrackers/{id} 
+    [HttpPut("{id}")]
+    public ActionResult UpdateActivity(int id, ActivityUpdateDto activityUpdateDto)
+    {
+      var activityModelFromRepo = _repository.GetActivityById(id);
+
+      if (activityModelFromRepo == null)
+      {
+        return NotFound();
+      }
+
+      // Map the source to the where we want to go
+      // This has already been implemented in DB Context
+      _mapper.Map(activityUpdateDto, activityModelFromRepo);
+
+      // Empty method with SQL Server, but good practice
+      _repository.UpdateActivity(activityModelFromRepo);
+
+      // Flush down the changes
+      _repository.SaveChanges();
+
+      // 204
+      return NoContent();
+
+    }
+
+    // PATCH api/activityTrackers/{id} 
+    // What we are receiving from the Client - patchJson, ultimately want to supply / pass to activity model
+    // We can't DIRECTLY pass it because this is a patch
+    // Need to create a new DTO effectively
+
+    // (1) Get PATCHDOC from our request
+    // (2) Check if we have the resource to update from our repository
+    // (3) Generate a new ActivityUpdateDto from the data of our repository model
+    // (4) We apply a patch to that. 
+    // (5) Apply a validation check
+
+    [HttpPatch("{id}")]
+    public ActionResult PartialActivityUpdate(int id, JsonPatchDocument<ActivityUpdateDto> patchDoc)
+    {
+      var activityModelFromRepo = _repository.GetActivityById(id);
+
+      if (activityModelFromRepo == null)
+      {
+        return NotFound();
+      }
+
+      // Source = activityModelFromRepo which is Activity model
+      // Effectively creating a new ActivityUpdateDto, content from our repository, putting it into activityToPatch
+      // Making use of CreateMap<Activity, ActivityUpdateDto>
+      var activityToPatch = _mapper.Map<ActivityUpdateDto>(activityModelFromRepo);
+
+      // Model State make sure things are valid
+      patchDoc.ApplyTo(activityToPatch, ModelState);
+      // Do a validation check
+      if (!TryValidateModel(activityToPatch))
+      {
+        return ValidationProblem(ModelState);
+      }
+
+      // DB context is tracking the changes
+      _mapper.Map(activityToPatch, activityModelFromRepo);
+      _repository.UpdateActivity(activityModelFromRepo);
+
+      // Flush down the changes
+      _repository.SaveChanges();
+
+      // 204
+      return NoContent();
+
+    }
+
+    // DELETE api/commands/{id}
+    [HttpDelete("{id}")]
+    public ActionResult DeleteCommand(int id)
+    {
+      var itemFromRepo = _repository.GetActivityById(id);
+
+      if (itemFromRepo == null)
+      {
+        return NotFound();
+      }
+
+      _repository.DeleteActivity(itemFromRepo);
+      _repository.SaveChanges();
+
+      return NoContent();
     }
 
   }
