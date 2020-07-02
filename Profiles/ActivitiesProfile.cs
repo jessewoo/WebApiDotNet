@@ -15,6 +15,7 @@ namespace ActivityTracker.Profiles
       CreateMap<ActivityCreateDto, Activity>();
 
       // PUT: Source (client) -> Target (db)
+      // The source is our updated detail from our client, then we will apply that to activity object that we have retrieved from our respository
       CreateMap<ActivityUpdateDto, Activity>();
 
       // PATCH: Source (db) -> Target (dto)

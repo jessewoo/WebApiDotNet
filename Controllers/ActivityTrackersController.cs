@@ -81,6 +81,11 @@ namespace ActivityTracker.Controllers
 
       // Map the source to the where we want to go
       // This has already been implemented in DB Context
+      // Previously we were mapping to a new or empty object of some type via our model i.e. _mapper.Map<CommandReadDto>(commandItem)
+      // Mapped model that contained data to a new command read detail
+      // Here we have a command detail that has data, and a command model that has data. 
+      // So it'll be _mapper.Map(SOURCE - the data we want to map from, OUTPUT - the data we want to map to)
+      // It has updated the MODEL and DB Context is tracker it. 
       _mapper.Map(activityUpdateDto, activityModelFromRepo);
 
       // Empty method with SQL Server, but good practice
